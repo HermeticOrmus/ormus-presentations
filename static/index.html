@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ormus Presentations</title>
+<style>
+:root {
+  --obsidian: #0B0B0D; --surface: #111114; --surface2: #1a1a1f; --surface3: #222228;
+  --gold: #D29E3D; --gold-dim: #B8860B; --parchment: #FAF6F0;
+  --muted: #777; --muted2: #555; --danger: #c0392b; --green: #2ecc71; --blue: #3498db;
+  --radius: 6px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--obsidian); color:var(--parchment); font-size:13px; line-height:1.5; }
+.app { display:flex; min-height:100vh; }
+.sidebar { width:200px; background:var(--surface); border-right:1px solid var(--surface2); padding:20px 0; flex-shrink:0; }
+.sidebar-brand { padding:0 16px 20px; border-bottom:1px solid var(--surface2); margin-bottom:8px; }
+.sidebar-brand h1 { font-size:14px; font-weight:600; color:var(--gold); letter-spacing:0.5px; }
+.sidebar-brand span { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.nav-item { padding:10px 16px; cursor:pointer; color:var(--muted); font-size:13px; border-left:2px solid transparent; transition:0.2s; }
+.nav-item:hover { color:var(--parchment); background:var(--surface2); }
+.nav-item.active { color:var(--gold); border-left-color:var(--gold); background:rgba(210,158,61,0.05); }
+.main { flex:1; padding:24px 32px; overflow-y:auto; max-height:100vh; }
+.page-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+.page-header h2 { font-size:18px; font-weight:600; }
+.btn { padding:7px 16px; border:none; border-radius:var(--radius); cursor:pointer; font-size:12px; font-weight:500; transition:0.2s; display:inline-flex; align-items:center; gap:5px; }
+.btn-primary { background:var(--gold); color:var(--obsidian); }
+.btn-primary:hover { background:var(--gold-dim); }
+.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--surface2); }
+.btn-ghost:hover { color:var(--parchment); border-color:var(--muted2); }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-sm { padding:4px 10px; font-size:11px; }
+.btn-green { background:var(--green); color:#fff; }
+.table-wrap { background:var(--surface); border:1px solid var(--surface2); border-radius:var(--radius); overflow:hidden; }
+table { width:100%; border-collapse:collapse; }
+th { text-align:left; padding:10px 14px; font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); background:var(--surface2); font-weight:600; }
+td { padding:10px 14px; border-bottom:1px solid var(--surface2); font-size:13px; }
+tr:hover td { background:rgba(210,158,61,0.03); }
+tr:last-child td { border-bottom:none; }
+.clickable { cursor:pointer; }
+.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; text-transform:uppercase; }
+.badge-draft { background:var(--surface3); color:var(--muted); }
+.badge-live { background:rgba(46,204,113,0.15); color:var(--green); }
+.badge-archived { background:var(--surface2); color:var(--muted2); }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; justify-content:center; align-items:flex-start; padding-top:40px; overflow-y:auto; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--surface2); border-radius:8px; width:640px; max-width:95vw; max-height:90vh; overflow-y:auto; margin-bottom:40px; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--surface2); }
+.modal-header h3 { font-size:15px; font-weight:600; }
+.modal-close { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; }
+.modal-body { padding:20px; }
+.modal-footer { display:flex; justify-content:flex-end; gap:8px; padding:16px 20px; border-top:1px solid var(--surface2); }
+.form-group { margin-bottom:14px; }
+.form-group label { display:block; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.3px; margin-bottom:4px; }
+.form-group input, .form-group select, .form-group textarea { width:100%; padding:8px 10px; background:var(--obsidian); border:1px solid var(--surface2); border-radius:var(--radius); color:var(--parchment); font-size:13px; font-family:inherit; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--gold); }
+.form-group textarea { resize:vertical; min-height:60px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.share-box { display:flex; align-items:center; gap:8px; background:var(--obsidian); border:1px solid var(--surface2); border-radius:var(--radius); padding:8px 12px; margin-bottom:16px; }
+.share-box input { flex:1; background:none; border:none; color:var(--parchment); font-size:12px; font-family:monospace; outline:none; }
+.slide-card { background:var(--surface); border:1px solid var(--surface2); border-radius:var(--radius); padding:14px 16px; margin-bottom:8px; display:flex; align-items:flex-start; gap:12px; }
+.slide-card .slide-order { color:var(--gold); font-weight:600; font-size:18px; min-width:28px; text-align:center; padding-top:2px; }
+.slide-card .slide-info { flex:1; }
+.slide-card .slide-info h4 { font-size:13px; font-weight:600; margin-bottom:4px; }
+.slide-card .slide-info p { font-size:11px; color:var(--muted); line-height:1.4; max-height:40px; overflow:hidden; }
+.slide-card .slide-actions { display:flex; gap:4px; flex-shrink:0; }
+.type-badge { font-size:9px; padding:2px 7px; border-radius:8px; text-transform:uppercase; letter-spacing:0.3px; font-weight:600; background:var(--surface3); color:var(--muted); margin-left:6px; }
+.empty { text-align:center; padding:48px 20px; color:var(--muted); }
+.empty h3 { font-size:15px; margin-bottom:8px; color:var(--muted2); }
+.toast { position:fixed; bottom:20px; right:20px; background:var(--surface); border:1px solid var(--gold); border-radius:var(--radius); padding:10px 16px; font-size:12px; color:var(--parchment); z-index:200; transform:translateY(100px); opacity:0; transition:all 0.3s; }
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.error { border-color:var(--danger); }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar">
+    <div class="sidebar-brand"><h1>ORMUS</h1><span>Presentations</span></div>
+    <div class="nav-item active" data-view="list">All Presentations</div>
+  </nav>
+  <div class="main">
+
+    <!-- List view -->
+    <div id="view-list" class="view">
+      <div class="page-header">
+        <h2>Presentations</h2>
+        <button class="btn btn-primary" onclick="openPresModal()">New Presentation</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Client</th><th>Slides</th><th>Status</th><th></th></tr></thead>
+          <tbody id="pres-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Detail view -->
+    <div id="view-detail" class="view" style="display:none">
+      <div id="detail-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Presentation Modal -->
+<div class="modal-overlay" id="pres-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="pres-modal-title">New Presentation</h3>
+      <button class="modal-close" onclick="closeModal('pres-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="pres-form">
+        <div class="form-group"><label>Title *</label><input name="title" required placeholder="e.g. Technology Partnership Proposal" /></div>
+        <div class="form-group"><label>Subtitle</label><input name="subtitle" placeholder="e.g. Prepared for Second 50 Financial" /></div>
+        <div class="form-group"><label>Client Name</label><input name="client_name" placeholder="e.g. Second 50 Financial" /></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('pres-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="savePres()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Slide Modal -->
+<div class="modal-overlay" id="slide-modal">
+  <div class="modal" style="width:700px">
+    <div class="modal-header">
+      <h3 id="slide-modal-title">Add Slide</h3>
+      <button class="modal-close" onclick="closeModal('slide-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="slide-form">
+        <div class="form-row">
+          <div class="form-group"><label>Title</label><input name="title" placeholder="Slide heading" /></div>
+          <div class="form-group">
+            <label>Type</label>
+            <select name="slide_type">
+              <option value="title">Title</option>
+              <option value="content" selected>Content</option>
+              <option value="stats">Stats</option>
+              <option value="list">List</option>
+              <option value="quote">Quote</option>
+              <option value="comparison">Comparison</option>
+              <option value="cta">Call to Action</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Content <span style="font-weight:400;text-transform:none">(markdown for content/list, "Label: Value" per line for stats, "Quote\\nAuthor" for quote, pipe-separated for comparison)</span></label>
+          <textarea name="content" rows="12" placeholder="Slide content..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('slide-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSlide()">Save Slide</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let presentations = [];
+let currentPresId = null;
+
+async function api(url, opts = {}) {
+  const res = await fetch(url, { ...opts, headers: { 'Content-Type': 'application/json', ...opts.headers }, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  if (!res.ok) { const err = await res.json().catch(() => ({ error: res.statusText })); throw new Error(err.error || 'Request failed'); }
+  return res.json();
+}
+
+async function init() {
+  presentations = await api('/api/presentations');
+  renderList();
+}
+
+function renderList() {
+  document.getElementById('pres-table').innerHTML = presentations.length
+    ? presentations.map(p => `<tr class="clickable" onclick="viewPres(${p.id})">
+        <td style="font-weight:500;color:var(--gold)">${esc(p.title)}</td>
+        <td>${esc(p.client_name || '-')}</td>
+        <td>${p.slide_count || 0}</td>
+        <td><span class="badge badge-${p.status}">${p.status}</span></td>
+        <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();deletePres(${p.id})">Del</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" class="empty"><h3>No presentations yet</h3></td></tr>';
+}
+
+async function viewPres(id) {
+  currentPresId = id;
+  const pres = await api('/api/presentations/' + id);
+  const viewUrl = location.origin + '/view/' + pres.share_token;
+
+  let html = `
+    <div class="page-header">
+      <h2>${esc(pres.title)}</h2>
+      <button class="btn btn-ghost" onclick="showList()">Back</button>
+    </div>
+    ${pres.subtitle ? '<p style="color:var(--muted);margin:-16px 0 16px">' + esc(pres.subtitle) + '</p>' : ''}
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <span class="badge badge-${pres.status}">${pres.status}</span>
+      ${pres.client_name ? '<span style="color:var(--muted);font-size:12px">' + esc(pres.client_name) + '</span>' : ''}
+    </div>
+    <div class="share-box">
+      <span style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.3px;white-space:nowrap">View Link</span>
+      <input type="text" value="${esc(viewUrl)}" readonly onclick="this.select()" id="view-url" />
+      <button class="btn btn-ghost btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('view-url').value);toast('Link copied')">Copy</button>
+      <a class="btn btn-ghost btn-sm" href="${esc(viewUrl)}" target="_blank">Open</a>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button class="btn btn-primary btn-sm" onclick="openSlideModal()">+ Add Slide</button>
+      <button class="btn btn-ghost btn-sm" onclick="editPres(${id})">Edit Details</button>
+      ${pres.status === 'draft' ? '<button class="btn btn-green btn-sm" onclick="setPresStatus(' + id + ',\'live\')">Publish</button>' : ''}
+      ${pres.status === 'live' ? '<button class="btn btn-ghost btn-sm" onclick="setPresStatus(' + id + ',\'draft\')">Unpublish</button>' : ''}
+    </div>
+    <h3 style="font-size:14px;margin-bottom:12px;color:var(--muted)">Slides (${pres.slides.length})</h3>
+  `;
+
+  if (pres.slides.length) {
+    html += pres.slides.map((s, i) => `
+      <div class="slide-card">
+        <div class="slide-order">${i + 1}</div>
+        <div class="slide-info">
+          <h4>${esc(s.title || '(untitled)')}<span class="type-badge">${s.slide_type}</span></h4>
+          <p>${esc((s.content || '').substring(0, 120))}${(s.content || '').length > 120 ? '...' : ''}</p>
+        </div>
+        <div class="slide-actions">
+          ${i > 0 ? '<button class="btn btn-ghost btn-sm" onclick="moveSlide(' + s.id + ',-1)">Up</button>' : ''}
+          ${i < pres.slides.length - 1 ? '<button class="btn btn-ghost btn-sm" onclick="moveSlide(' + s.id + ',1)">Dn</button>' : ''}
+          <button class="btn btn-ghost btn-sm" onclick="editSlide(' + s.id + ')">Edit</button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--danger)" onclick="deleteSlide(' + s.id + ')">Del</button>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    html += '<div class="empty"><h3>No slides yet</h3><p>Add slides to build your presentation.</p></div>';
+  }
+
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('view-list').style.display = 'none';
+  document.getElementById('view-detail').style.display = '';
+}
+
+function showList() {
+  document.getElementById('view-detail').style.display = 'none';
+  document.getElementById('view-list').style.display = '';
+  init();
+}
+
+// Presentation CRUD
+function openPresModal(data) {
+  document.getElementById('pres-modal-title').textContent = data ? 'Edit Presentation' : 'New Presentation';
+  const form = document.getElementById('pres-form');
+  form.reset();
+  form.id_field = data ? data.id : null;
+  if (data) {
+    form.title.value = data.title || '';
+    form.subtitle.value = data.subtitle || '';
+    form.client_name.value = data.client_name || '';
+  }
+  openModal('pres-modal');
+}
+
+async function editPres(id) {
+  const pres = await api('/api/presentations/' + id);
+  openPresModal(pres);
+}
+
+async function savePres() {
+  const form = document.getElementById('pres-form');
+  const data = Object.fromEntries(new FormData(form));
+  if (!data.title) return toast('Title is required', true);
+  try {
+    const id = form.id_field;
+    if (id) {
+      await api('/api/presentations/' + id, { method: 'PUT', body: data });
+      closeModal('pres-modal');
+      viewPres(id);
+    } else {
+      const pres = await api('/api/presentations', { method: 'POST', body: data });
+      closeModal('pres-modal');
+      viewPres(pres.id);
+    }
+    toast(id ? 'Updated' : 'Created');
+  } catch (e) { toast(e.message, true); }
+}
+
+async function setPresStatus(id, status) {
+  await api('/api/presentations/' + id, { method: 'PUT', body: { status } });
+  viewPres(id);
+  toast('Status: ' + status);
+}
+
+async function deletePres(id) {
+  if (!confirm('Delete this presentation?')) return;
+  await api('/api/presentations/' + id, { method: 'DELETE' });
+  presentations = await api('/api/presentations');
+  renderList();
+  toast('Deleted');
+}
+
+// Slide CRUD
+function openSlideModal(data) {
+  document.getElementById('slide-modal-title').textContent = data ? 'Edit Slide' : 'Add Slide';
+  const form = document.getElementById('slide-form');
+  form.reset();
+  form.id_field = data ? data.id : null;
+  if (data) {
+    form.title.value = data.title || '';
+    form.slide_type.value = data.slide_type || 'content';
+    form.content.value = data.content || '';
+  }
+  openModal('slide-modal');
+}
+
+async function editSlide(slideId) {
+  const pres = await api('/api/presentations/' + currentPresId);
+  const slide = pres.slides.find(s => s.id === slideId);
+  if (slide) openSlideModal(slide);
+}
+
+async function saveSlide() {
+  const form = document.getElementById('slide-form');
+  const data = Object.fromEntries(new FormData(form));
+  try {
+    const slideId = form.id_field;
+    if (slideId) {
+      await api('/api/presentations/' + currentPresId + '/slides/' + slideId, { method: 'PUT', body: data });
+    } else {
+      await api('/api/presentations/' + currentPresId + '/slides', { method: 'POST', body: data });
+    }
+    closeModal('slide-modal');
+    viewPres(currentPresId);
+    toast(slideId ? 'Slide updated' : 'Slide added');
+  } catch (e) { toast(e.message, true); }
+}
+
+async function deleteSlide(slideId) {
+  if (!confirm('Delete this slide?')) return;
+  await api('/api/presentations/' + currentPresId + '/slides/' + slideId, { method: 'DELETE' });
+  viewPres(currentPresId);
+  toast('Slide deleted');
+}
+
+async function moveSlide(slideId, dir) {
+  const pres = await api('/api/presentations/' + currentPresId);
+  const ids = pres.slides.map(s => s.id);
+  const idx = ids.indexOf(slideId);
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= ids.length) return;
+  [ids[idx], ids[newIdx]] = [ids[newIdx], ids[idx]];
+  await api('/api/presentations/' + currentPresId + '/reorder', { method: 'PUT', body: { order: ids } });
+  viewPres(currentPresId);
+}
+
+// Utils
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function toast(msg, err) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show' + (err ? ' error' : '');
+  clearTimeout(el._t); el._t = setTimeout(() => el.className = 'toast', 3000);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); });
+
+init();
+</script>
+</body>
+</html>

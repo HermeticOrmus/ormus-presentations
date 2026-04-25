@@ -1,0 +1,20 @@
+{
+  "name": "ormus-presentations",
+  "version": "1.0.0",
+  "description": "Self-hosted presentation builder. Express + SQLite, full-screen scroll-snap viewer, shareable links, 7 slide types.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/HermeticOrmus/ormus-presentations",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HermeticOrmus/ormus-presentations.git"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "express": "^4.21.0"
+  }
+}
