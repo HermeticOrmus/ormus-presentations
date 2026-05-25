@@ -1,6 +1,23 @@
-# ormus-presentations
+<p align="center">
+  <img src="https://ormus.solutions/mascot/chain_braces_to_swan.gif" alt="ormus-presentations" width="128" style="image-rendering: pixelated;" />
+</p>
 
-> Self-hosted presentation builder. Full-screen scroll-snap viewer, shareable links, 7 slide types. Express + SQLite.
+<h1 align="center">ormus-presentations</h1>
+
+<p align="center">
+  <em>Self-hosted presentation builder. Full-screen scroll-snap viewer, shareable links, 7 slide types. Express + SQLite.</em>
+</p>
+
+<p align="center">
+  <a href="https://github.com/HermeticOrmus/ormus-presentations/stargazers"><img src="https://img.shields.io/github/stars/HermeticOrmus/ormus-presentations?style=flat-square&color=aa8142" alt="Stars" /></a>
+  <a href="https://github.com/HermeticOrmus/ormus-presentations/blob/main/LICENSE"><img src="https://img.shields.io/github/license/HermeticOrmus/ormus-presentations?style=flat-square&color=aa8142" alt="License" /></a>
+  <a href="https://github.com/HermeticOrmus/ormus-presentations/commits"><img src="https://img.shields.io/github/last-commit/HermeticOrmus/ormus-presentations?style=flat-square&color=aa8142" alt="Last Commit" /></a>
+  <img src="https://img.shields.io/badge/Claude_Code-aa8142?style=flat-square&logo=anthropic&logoColor=white" alt="Claude Code" />
+</p>
+
+---
+
+> **Self-hosted presentation builder. Full-screen scroll-snap viewer, shareable links, 7 slide types. Express + SQLite.**
 
 A minimal-but-complete presentation tool you run yourself. Build decks via API or DB, share a token URL, viewer scrolls through full-screen slides with keyboard navigation and progress tracking. No SaaS, no Google account, no animations-as-product.
 
